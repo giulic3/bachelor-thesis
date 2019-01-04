@@ -1,0 +1,65 @@
+Di seguito viene riportata un'analisi del contributo originale, suddivisa in un'analisi generale del progetto inteso come somma delle sue due parti e un'analisi specifica indirizzata in modo particolare al lavoro su VNC on the GO.
+\section{Estensione del supporto server per dispositivi mobili}
+Come riferito nella sottosezione "2.2.4 Android/iOS", uno degli aspetti migliorabili del presente progetto riguarda il supporto per dispositivi mobili, per i quali attualmente sono assenti implementazioni come software libero di server VNC.\\
+Il supporto sarebbe infatti caratteristica gradita in quanto, con la rapida crescita del mercato mobile a discapito di quello desktop, non è più raro trovare relatori che usano i propri tablet per proiettare le loro presentazioni, e in questi casi il sistema proposto non può più essere applicato.\\
+Allo stato delle cose comunque, trovare una soluzione a questo problema sembra molto difficile, a meno che non si abbandoni l'uso di VNC per passare ad altri protocolli. \\
+Nel mondo Android, le poche implementazioni VNC disponibili richiedono il rooting del dispositivo, che non è una procedura universale e consigliabile per ogni utente, per varie ragioni, tra cui sicurezza, rischio di rovinare il dispositivo, invalidazione della garanzia.\\
+Nel mondo iOS poi, difficilmente un'app come un VNC server, che potenzialmente trasmette in chiaro dati sensibili in remoto, potrebbe mai essere approvata per essere pubblicata nello store ufficiale.
+\section{Stabilità del canale nello streaming audio}
+Durante i test svolti per controllare il funzionamento dello streaming audio/video da server a client si è notato una differenza della stabilità del flusso audio in riproduzione, variabile insieme al software che funge da sorgente audio.\\
+Si sono effettuati test che hanno coinvolto il browser Mozilla Firefox e i lettori musicali VLC, Amarok, Banshee, Rhythmbox. I risultati migliori si sono ottenuti con quest'ultimo.\\
+Inoltre, la riproduzione audio è stata talvolta soggetta a interruzioni e variazioni di volume, probabilmente imputabili a una scorretta comunicazione tra client e server. Questi problemi devono essere investigati ulteriormente provando diverse configurazioni di PulseAudio su più macchine server.
+
+\section{Tempi di avvio del Raspberry Pi Zero W}
+Un aspetto fondamentale per avere una esperienza di utilizzo positiva del sistema, è garantire che i tempi di boot siano i più rapidi possibile, per poter iniziare la presentazione in tempi ragionevoli.
+Per questo motivo sul mini-computer è stato installato Raspbian in versione Lite, priva di software aggiuntivi che normalmente sono inseriti nella versione completa, e privo di interfaccia grafica. \\Solo successivamente si sono installati i pacchetti (minimi) necessari per abilitare il desktop grafico, richiesto per l'utilizzo di VNC.\\
+Sono stati inoltre disabilitati alcuni service in background ritenuti inutili per l'utilizzo previsto.\\
+Per misurare i tempi di boot si è utilizzato il comando systemd-analyze che viene comunemente usato per misurare statistiche sulla performance di un sistema all'avvio, il quale ha riportato in output che lo startup termina in 1.498 secondi in kernel space e in 23.841 secondi in user space, per un totale di 25.340 secondi.\\
+
+
+I risultati ottenuti sono sembrati accettabili, tuttavia, è possibile fare di meglio: per velocizzare ulteriormente l'avvio, si potrebbe utilizzare un sistema operativo con kernel custom dotato strettamente dei moduli necessari, utilizzando ad esempio un tool come \textit{Buildroot} per la compilazione. \\
+
+
+\section{Tempi di risposta in VNC on the GO}
+Durante i test svolti per valutare l'usabilità del sistema VNC on the GO dal punto di vista dell'esperienza utente, uno degli aspetti principali è stato analizzare la reattività del sistema agli input inviati tramite Piremote durante una normale presentazione.
+Inizialmente, l'applicazione è stata testata mentre veniva eseguita su laptop Dell Inspiron 7537. Il controllo della presentazione avviene con risposte immediate, con un ritardo non percepibile dall'utente.\\
+Successivamente, si è testato il sistema con Piremote in esecuzione su Raspberry Pi Zero W, con e senza l'utilizzo di VNC.\\
+Nel primo caso, si nota immediatamente un'aggiunta di ritardo nella reazione agli input da web browser: principalmente dovuta alle limitate risorse del mini-computer rispetto al laptop.
+
+L'esecuzione del server VNC in aggiunta, introduce un ulteriore overhead, dato dal fatto che ad ogni cambio di pagina o apertura di file, è necessario che la schermata lato server sia completamente ridisegnata sul client.\\
+Un possibile miglioramento potrebbe prevedere la sostituzione del Raspberry Pi Zero W, che è molto più efficiente se utilizzato in contesti che non prevedano l'utilizzo di ambiente grafico, con un modello di Raspberry con dotazione superiore (la versione 3 ad esempio), accettando il compromesso di dover aumentare il costo complessivo del progetto.\\
+
+% Please add the following required packages to your document preamble:
+% \usepackage[normalem]{ulem}
+% \useunder{\uline}{\ul}{}
+\begin{table}[h]
+\footnotesize
+\centering
+\begin{tabular}{lll}
+\hline
+\multicolumn{1}{|l|}{{\ul }}       & \multicolumn{1}{l|}{\textbf{Raspberry Pi Zero W}}  & \multicolumn{1}{l|}{\textbf{Raspberry Pi 3 (Model B)}}              \\ \hline
+\multicolumn{1}{|l|}{\textbf{CPU}}          & \multicolumn{1}{l|}{BCM2835 1GHz ARM11}   & \multicolumn{1}{l|}{Quadcore 64bit 1.2GHz ARM Cortex A53} \\ \hline
+\multicolumn{1}{|l|}{\textbf{GPU}}          & \multicolumn{1}{l|}{none}                 & \multicolumn{1}{l|}{Broadcom VideoCore IV @ 400 MHz}       \\ \hline
+\multicolumn{1}{|l|}{\textbf{RAM}}          & \multicolumn{1}{l|}{512 MB}               & \multicolumn{1}{l|}{1GB (LPDDR2-900 SDRAM)}                \\ \hline
+\multicolumn{1}{|l|}{\textbf{Storage}}      & \multicolumn{1}{l|}{MicroSD}              & \multicolumn{1}{l|}{MicroSD}                               \\ \hline
+\multicolumn{1}{|l|}{\textbf{USB}}          & \multicolumn{1}{l|}{1 Micro USB socket}   & \multicolumn{1}{l|}{4}                                     \\ \hline
+\multicolumn{1}{|l|}{\textbf{Ethernet}}     & \multicolumn{1}{l|}{0}                    & \multicolumn{1}{l|}{1}                                     \\ \hline
+\multicolumn{1}{|l|}{\textbf{Wi-Fi}}        & \multicolumn{1}{l|}{802.11n Wireless LAN} & \multicolumn{1}{l|}{802.11n Wireless LAN}                  \\ \hline
+\multicolumn{1}{|l|}{\textbf{Bluetooth}}    & \multicolumn{1}{l|}{Bluetooth 4.0}        & \multicolumn{1}{l|}{Bluetooth 4.0}                         \\ \hline
+\multicolumn{1}{|l|}{\textbf{Video out}} & \multicolumn{1}{l|}{Mini-HDMI}            & \multicolumn{1}{l|}{HDMI/Composite via RCA Jack}           \\ \hline
+\multicolumn{1}{|l|}{\textbf{Audio out}} & \multicolumn{1}{l|}{none}                 & \multicolumn{1}{l|}{3.5mm jack}                            \\ \hline
+\multicolumn{1}{|l|}{\textbf{GPIO}}         & \multicolumn{1}{l|}{40 (unpopulated)}     & \multicolumn{1}{l|}{40}                                    \\ \hline
+\multicolumn{1}{|l|}{\textbf{Size}}         & \multicolumn{1}{l|}{65 mm x 30 mm x 5 mm} & \multicolumn{1}{l|}{85.6 mm x 56.5 mm x 17 mm}             \\ \hline
+\multicolumn{1}{|l|}{\textbf{Price}}        & \multicolumn{1}{l|}{\$10}                 & \multicolumn{1}{l|}{\$35}                                  \\ \hline                    
+
+\end{tabular}
+\caption{Confronto tra Raspberry Pi Zero W e Raspberry Pi 3}
+\end{table}
+
+\section{Modalità di caricamento delle presentazioni}
+All'interno della sezione precedente si sono descritte le modalità con cui una presentazione viene scelta per l'esecuzione a partire da una directory prefissata. Tra le possibilità contemplate per il trasferimento di tale presentazione sul Raspberry Pi Zero W si è parlato di collegamento tramite USB, utilizzando lettore di SD card oppure per copia tramite protocollo SCP.\\
+In un'estensione del progetto sarebbe interessante aggiungere la possibilità per l'utente di ottenere le presentazioni in automatico all'avvio direttamente dalla rete, facendo uso ad esempio di un servizio di archiviazione cloud quale Dropbox, Mega o Google Drive.\\ Il sistema dovrebbe essere sincronizzato con un account specifico e al momento dell'avvio dovrebbe essere configurato per effettuare il download della presentazione desiderata, trasferita sul cloud precedentemente.\\
+Tale meccanismo richiede una connessione di rete attiva, che potrebbe essere resa disponibile dal Raspberry stesso in caso sia possibile collegarsi a rete libera oppure si abbia modo di autenticarsi in una rete non libera, altrimenti si potrebbe semplicemente utilizzare lo smartphone come hotspot a cui associare il Raspberry via tethering, e quindi poter usufruire della rete cellulare, in sostituzione al WiFi.
+
+\section{Estensione delle possibilità di controllo tramite Piremote}
+Allo stato attuale Piremote implementa solamente le funzionalità di base coinvolte nel controllo di una presentazione, per cui esistono molteplici altre operazioni per le quali sarebbe possibile aggiungere il supporto. Ad esempio, le modalità con il quale avviene il caricamento della prima presentazione e la ricerca delle altre è attualmente limitato: la ricerca dei documenti PDF può avvenire unicamente all'interno della directory designata, mentre sarebbe più conveniente un metodo che consentisse di navigare liberamente il file system per trovare la presentazione desiderata. 

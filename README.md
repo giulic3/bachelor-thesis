@@ -5,4 +5,4 @@ Oggigiorno il mercato offre una varietà notevole di proiettori wireless; i mode
 
 
 
-[![GitHub](https://i.creativecommons.org/l/by-nc-sa/3.0/it/88x31.png)](http://creativecommons.org/licenses/by-nc-sa/3.0/it/)
+[![Creative Commons by-nc-sa 3.0](https://i.creativecommons.org/l/by-nc-sa/3.0/it/88x31.png)](http://creativecommons.org/licenses/by-nc-sa/3.0/it/)
